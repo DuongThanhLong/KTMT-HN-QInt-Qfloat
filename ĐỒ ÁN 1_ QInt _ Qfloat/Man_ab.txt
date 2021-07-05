@@ -1,0 +1,232 @@
+#include<iostream>
+#include"conio.h"
+#include<string>
+#include<math.h>
+#include <sstream>
+
+using namespace std;
+struct Qint {
+	int data[4];//16 
+};
+void SetBit(Qint& X, int i) {
+	X.data[i / 32] = (X.data[i / 32] | (1 << (31 - i % 32))); // X.data[i/32] = (X.data[i/32] | (1 << (31 - i%32)))
+}
+int GetBit(Qint x, int i) {
+	return ((x.data[i / 32] >> (31 - i % 32)) & 1);
+}
+//Buf2 chưa hoàn thiện
+Qint Bu2(Qint x) {
+	Qint y;
+	for (int i = 1; i < 128; i++)
+	{
+		int m = GetBit(x, i);
+		if (m == 0)
+			SetBit(y, i);
+	}
+	// y -= 1; //hàm câu e
+	return y;
+}
+void ScanQint2(Qint& x, string num) {// không dấu - +
+	int i = 127;//vị trí setBit
+	for (int j = num.length() - 1; j >= 0; j--)
+	{
+		if (num[j] == '1')
+			SetBit(x, i);
+		if (i == 0)
+			break;
+		i--;
+	}
+}
+int ChuoiHopLe(string num) {// trả về cơ số nếu hợp lệ, trả 0 nếu k hopej lệ
+	int i = 0;
+	int check2, check10, check16;// biến kiểm tra cơ số
+	check2 = check16 = check10 = 0; //tại sao không dùng 1 biến? vì chạy vòng lặp biến sẽ thay đổi
+	if (num[i] == '-' || num[i] == '+')// dấu
+		i++;
+	do {
+		if (num[i] < '0' || (num[i] > '9' && num[i] < 'A') || num[i]>'F')//ngoại lệ
+		{
+			cout << "SO BAN NHAP KHONG HOP LE !!!\n";// throw hay cout??
+			break;
+		}
+		if ('A' <= num[i] && num[i] <= 'F') {
+			check16 = 1;
+		}
+		if (check16 == 0) {
+			if (num[i] != '0' && num[i] != '1') { check10 = 1; }
+
+			if (check10 == 0) check2 = 1;// nhập '101' sẽ ra nhị phân
+		}
+		i++;
+	} while (i < num.length());
+	if (check16 == 1)
+		return 16;
+	if (check10 == 1)
+		return 10;
+	if (check2 == 1) return 2;
+	else return 0;
+}
+string Chia2(string dec) {// không âm
+	int k = 0, n = dec.length();
+	ostringstream kq;
+	for (int i = 0; i < n; i++) { // bỏ qua số 1 dư nếu có
+		int l = ((int)dec.front() - 48);// giá trị đầu
+		k = k * 10 + l;
+		kq << (int)(k / 2);
+		k = k % 2;
+		
+		dec.erase(0, 1);
+	}
+	return kq.str();
+}
+string HexToBin(string hex) {// chuỗi 16 --> 2   khoông aâm
+	ostringstream bin;
+	for (int i = 0; i < hex.length(); i++) {
+		for (int j = 4; j < 8; j++) { // 4 bit cuối của mỗi kí tự
+			int a;
+			if (hex[i] >= '0' && hex[i] <= '9')
+				a = (int)((hex[i] >> (7 - j)) & 1);
+			else
+				a = (int)(((hex[i] - 7) >> (7 - j)) & 1); // trừ 7 để 4bit cuối A -->10 B-->11...
+			bin << a;
+		}
+	}
+	return bin.str();
+}
+void Init(Qint& x) {
+	for (int i = 0; i < 4; i++)
+		x.data[i] = 0;
+}
+//cong 1
+string Cong(string dec1, string dec2) {
+	if (dec1.empty())
+		return dec2;
+	if (dec2.empty())
+		return dec1;
+	int  n, nho;
+	string kq;
+	nho = 0;
+	if (dec1.length() < dec2.length())
+	{
+		kq = dec1;
+		dec1 = dec2;
+		dec2 = kq;
+		kq.clear();
+	}
+	n = dec1.length();
+	// dòng for chạy n+1 lần vì xét biến nhớ VD 9+9=18 chạy 2 lần
+	for (int i = 0; i <= n; i++) {//str.insert(0, str2); strcat(s1, s2);
+		int a, b;
+		if (dec1.empty())
+		{
+			a = 0;
+			if (nho == 0)
+				break;
+		}
+		else
+			a = ((int)dec1.back() - 48); // giá trị theo ascii 1-->4
+		if (dec2.empty())
+			b = 0;
+		else
+			b = ((int)dec2.back() - 48);
+		int k = (a + b) + nho;
+		if (k > 9) {
+			nho = 1;
+			k -= 10;
+		}
+		else
+			nho = 0;
+		ostringstream t;
+		t << k;
+		kq.insert(0, t.str());
+		if (!dec1.empty())
+			dec1.pop_back();
+		if (!dec2.empty())
+			dec2.pop_back();
+	}
+	return kq;
+}
+void ScanQint(Qint& x) {
+	string num;
+	int p;
+	int i = 0;
+	int am = 0;//0 âm 1 dương
+	do {
+		cout << "Nhap so: ";
+		cin >> num;
+		p = ChuoiHopLe(num);
+		if (p != 0)
+			break;
+	} while (p == 0);
+	if (num[i] == '-' || num[i] == '+')
+	{
+		if (num[i] == '-')
+			am = 1;
+		num.erase(0, 1);
+	}
+	cout << " p = " << p << endl;
+	cout << "num : " << num << endl;
+	if (p == 2)
+		ScanQint2(x, num);
+	else if(p == 10) {
+		int i = 127;
+		do {
+			int n = ((int)num.back() - 48);
+			if (n % 2 == 1)
+				SetBit(x, i);
+			num = Chia2(num);
+			
+			if (num.length() == 1 && n == 0)
+				break;
+			if (i == 0)
+				break;
+			i--;
+
+		} while (!num.empty());
+		cout << endl;
+	}
+	else
+		ScanQint2(x, HexToBin(num));
+	
+	if (am == 1)
+		x = Bu2(x);
+
+}
+
+//prin 1
+void PrintQint(Qint x) {
+
+	string k = "";
+	for (int i = 0; i < 128; i++) {
+		// k=(k+bit[i])*2
+		k = Cong(k, k);
+
+		if (GetBit(x, i) == 1)
+		{
+			k = Cong(k, "1");
+		}
+		/*
+		VD: dãy bit 1011  ---> Thập phân: ((1*2 + 0)*2 +1)*2 +1*/
+	}
+	cout << k << endl;
+}
+void DocBitNP(Qint x)
+{
+	for (int i = 0; i < 128; i++) //tuong tac bit i --> data[i/32], bit thu[i%32] từ trái qua phải 
+	{
+		cout << GetBit(x, i);
+	}
+}
+int main()
+{
+	Qint x;
+	Init(x);
+	ScanQint(x);
+	//DocBitNP(x);
+	cout << "\n---------------------\n";
+
+	PrintQint(x);
+
+	_getch;
+	return 0;
+}

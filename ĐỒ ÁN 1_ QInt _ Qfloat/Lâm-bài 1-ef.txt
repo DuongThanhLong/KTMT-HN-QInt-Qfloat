@@ -1,0 +1,113 @@
+
+
+//(sử dụng code câu của Long để phục vụ cho câu f)
+bool* DecToBin(Qint a)
+{
+	bool* Bin = new bool[128];
+	int thuTu = 3;
+	int viTriBit = 0;
+	for (int i = 127; i >= 0; i--) {
+		if (viTriBit == 32) {
+			viTriBit = 0;
+			thuTu--;
+		}
+		Bin[i] = ((a.data[thuTu] >> viTriBit) & 1);
+		viTriBit++;
+	}
+	return Bin;
+}
+
+
+
+
+//câu e
+
+char* BinToHex(bool* bit)
+{
+	int n = 128;
+	int sizebit = 128;
+	char* a = new char[(sizebit / 4)];
+	for (int h= (sizebit/4)-1; h >= 0; h--)
+	{
+		bool* temp = new bool[4];
+		int j = 3;
+		for (int k = n-1; k >= n-1-3; k--)
+		{
+			temp[j] = bit[k];
+			j--;
+		}
+		char x = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			x = x | (temp[i] << (3 - i));
+		}
+		if(x>=10)
+			a[h] = x + 55;
+		else
+			a[h] = x + 48;
+		n = n - 4;
+	}
+	return a;
+
+
+}
+
+//câu f
+char* DectoHex(Qint x)
+{
+
+	bool* bin = DecToBin(x);
+	int n = 128;
+	int sizebit = 128;
+	char* a = new char[sizebit / 4];
+	for (int h = (sizebit / 4) - 1; h >= 0; h--)
+	{
+		bool* temp = new bool[4];
+		int j = 3;
+		for (int k = n - 1; k >= n - 1 - 3; k--)
+		{
+			temp[j] = bin[k];
+			j--;
+		}
+		char x = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			x = x | (temp[i] << (3 - i));
+		}
+		if (x >= 10)
+			a[h] = x + 55;
+		else
+			a[h] = x + 48;
+		n = n - 4;
+	}
+	return a;
+}
+
+void output(char a[], int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		cout << a[i];
+	}
+	cout << endl;
+}
+int main()
+{
+	Qint x;
+	Init(x);
+	ScanQint(x);
+	//DocBitNP(x);
+	cout << "\n---------------------\n";
+
+	PrintQint(x);
+( phần trên là sử dụng code của mận để nhập và test câu f )
+	//câu e
+	bool f[128] = { 0,0,0,0,1,0,1,0, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1, 0,1,1,1,1,1,0,1 };
+	char* d = BinToHex(f);
+	output(d, 128/4);
+	// câu f
+	char* s = DectoHex(x);
+	output(s,32);
+	system("pause");
+
+}

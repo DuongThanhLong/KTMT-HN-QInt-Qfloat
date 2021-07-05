@@ -1,0 +1,14 @@
+Câu d:
+
+
+bool* QFloat::DecToBinFloat(QFloat x)
+{
+	bool* Bit = new bool[128];
+	for (int i = 127; i >= 0; i--)
+	{
+		Bit[i] = (data[i / 8] >> (7 - (i % 8)) & 1);
+	}
+	// Thu tu cua data = i/8
+	// Vi tri bit cua data = 7 - (i%8)
+	return Bit;
+}

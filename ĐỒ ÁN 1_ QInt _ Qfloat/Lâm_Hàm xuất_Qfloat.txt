@@ -1,0 +1,107 @@
+﻿#include <iostream>
+#include<string>
+#include"XuLyChuoi.h"
+#include <string>
+#include <sstream>
+using namespace std;
+struct Qfloat
+{
+	float data[4];
+};
+bool* stringtobin(string s)
+{
+	int length = s.length();
+	bool* a = new bool[128];
+	for (int i = length-1; i >=0 ; i--)
+	{
+		a[i] = (bool)(s[i]-48) *pow(10,length-i-1);
+	}
+	return a;
+}
+void output(bool a[], int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		cout << " " << a[i];
+	}
+}
+int Exponent(bool* s) // chuyển phần mũ về 
+{
+	bool* temp = new bool[15];
+	for (int i = 0; i < 15; i++)
+	{
+		temp[i] = s[i + 1];
+	}
+	int x = 0;
+	for (int j = 0; j < 15; j++)
+	{
+		x = x | (temp[j] << (14 - j));
+	}
+	return x - (pow(2, 14) - 1); // trừ cho số k
+}
+float Significand(bool* s)
+{
+	int a = Exponent(s);
+	bool* temp = new bool[112];
+	for (int i = 0; i < 112; i++)
+	{
+		temp[i] = s[i+16];
+	}
+	bool* temp1 = new bool[a + 1];
+	temp1[0] = (bool)1;
+	for (int i = 1; i < a+1; i++)
+	{
+		temp1[i] = temp[i-1];
+	}
+	int t = 0;
+	for (int i = 0; i < a + 1; i++)
+	{
+		t=t| (temp1[i] << (a - i));
+	}
+
+	return t;
+}
+float Significand1(bool* s)
+{
+	int a = Exponent(s);
+	bool* temp = new bool[112];
+	for (int i = 0; i < 112; i++)
+	{
+		temp[i] = s[i + 16];
+	}
+	float x = 0;
+	for (int j = a; j < 112-a; j++)
+	{
+		x = x + (int)temp[j] * pow(2, (-j - 1));
+	}
+	return x;
+}
+
+string Tostring(bool *s)
+{
+	stringstream print;
+	int a = Significand(s);
+	float b = Significand1(s);
+	//string c = xetdau(s);
+	if(s[0]==0)
+		print  << a+ b;
+	else
+		print <<"-"<< a + b;
+	return print.str();
+}
+
+void PrintQfloat(bool *s) {
+
+	cout<<Tostring(s);
+}
+
+
+int main()
+{
+	string s("01000000000000001101011011110011101000001101001010110110110000001110000001011000110011010000011110101100000101001010110010101101");
+	bool *t=stringtobin(s);
+	//cout << Exponent(t);
+	//cout << Significand(t);
+	//output(t, 4);
+	PrintQfloat(t);
+}

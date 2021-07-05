@@ -1,0 +1,67 @@
+// Câu c
+bool* DecToBin(QInt a)
+{
+	//int size = SizeBitQInt(a);
+	//bool *Bin = new bool[size];
+	bool *Bin = new bool[128];
+	int thuTu = 3;
+	int viTriBit = 0;
+	for (int i = 127; i >= 0; i--) {
+		if (viTriBit == 32) {
+			viTriBit = 0;
+			thuTu--;
+		}
+		Bin[i] = ((a.data[thuTu] >> viTriBit) & 1);
+		viTriBit++;
+	}
+	return Bin;
+}
+
+// Câu d
+QInt BinToDec(bool *bit)
+{
+	QInt a;
+	int j = 127;
+	int i = 127;
+	int viTriBit = 0, thuTu = 3;
+	while (i >= SizeOfBool(bit) - 1) {
+		SetBitIntoQInt(a, bit[i], viTriBit, thuTu);
+		i--;
+		viTriBit++;
+		if (viTriBit == 32) {
+			viTriBit = 0;
+			thuTu--;
+		}
+	}
+	return a;
+}
+void SetBitIntoQInt(QInt &x, bool a, int vt, int thuTu)
+{
+	x.data[thuTu] = (a << vt) | x.data[thuTu];
+}
+int SizeOfBool(bool *a)
+{ //Hàm này trả về số bit trong mảng bool
+	int count = 0; // biến đếm
+	int i = 0;
+	while (a[i] != 1) {
+		count++;
+		 i++;
+	}
+	return 128 - count;
+}
+int SizeBitQInt(QInt a)
+{ // trả về số lượng bit của a
+	int size = 0;
+	int i = 31, thuTu = 0;
+	bool temp = (a.data[0] >> 31) & 1;
+	while (temp == false) {
+		size++;
+		 i--;
+		if (i == -1) {
+			i = 31;
+			thuTu++;
+		}
+		temp = (a.data[thuTu] >> i) & 1;
+	}
+	return 128 - size;
+}

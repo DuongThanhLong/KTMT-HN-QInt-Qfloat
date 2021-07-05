@@ -1,0 +1,195 @@
+Câu h:
+//Lấy từ hàm print câu b
+
+string ChuyenChuoi(QInt x)
+{
+	string k = "";
+	for (int i = 0; i < 128; i++) {
+		// k=(k+bit[i])*2
+		k = Cong(k, k);
+
+		if (GetBit(x, i) == 1)
+		{
+			k = Cong(k, "1");
+		}
+		/*
+		VD: dãy bit 1011  ---> Thập phân: ((1*2 + 0)*2 +1)*2 +1*/
+	}
+	return k;
+}
+
+
+
+
+bool operator<(QInt x, QInt y)
+{
+	string a="";
+	string b="";
+
+	a = ChuyenChuoi(x);
+	b = ChuyenChuoi(y);
+
+	if (a < b)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+bool operator>(QInt x, QInt y)
+{
+	string a = "";
+	string b = "";
+
+	a = ChuyenChuoi(x);
+	b = ChuyenChuoi(y);
+
+	if (a > b)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+bool operator==(QInt x, QInt y)
+{
+	string a = "";
+	string b = "";
+
+	a = ChuyenChuoi(x);
+	b = ChuyenChuoi(y);
+
+	if (a == b)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+bool operator<=(QInt x, QInt y)
+{
+	string a = "";
+	string b = "";
+
+	a = ChuyenChuoi(x);
+	b = ChuyenChuoi(y);
+
+	if (a <= b)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+bool operator>=(QInt x, QInt y)
+{
+	string a = "";
+	string b = "";
+
+	a = ChuyenChuoi(x);
+	b = ChuyenChuoi(y);
+
+	if (a >= b)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+QInt operator=(QInt x, QInt y)
+{
+	bool* a = new bool[128];
+	bool* b = new bool[128];
+
+	a = DecToBin(x);
+	b = DecToBin(y);
+
+	for (int i = 0; i < 128; i++)
+	{
+		b[i] = a[i];
+	}
+
+	return BinToDec(b);
+}
+
+
+
+
+
+
+Câu j:
+//Dịch trái
+QInt operator<<(QInt x, int n)
+{
+	bool* a = new bool[128];
+	bool* b = new bool[128];
+
+	a = DecToBin(x);
+
+	for (int i = 0; i < 128; i++)
+	{
+		b[i] = 0;
+	}
+	for (int i = 127 - n; i >= 0; i--)
+	{
+		b[i] = a[i + n];
+	}
+
+	return BinToDec(b);
+}
+
+//Dịch phải
+QInt operator>>(QInt x, int n)
+{
+	bool* a = new bool[128];
+	bool* b = new bool[128];
+
+	a = DecToBin(x);
+
+	for (int i = 0; i < 128; i++)
+	{
+		b[i] = 0;
+	}
+	for (int i = n; i < 128; i++)
+	{
+		b[i] = a[i - n];
+	}
+
+	return BinToDec(b);
+}
+
+
+//Xoay trái
+QInt operatorrol(QInt x, int n)
+{
+	bool* a = new bool[128];
+
+	a = DecToBin(x);
+	for (int j = 0; j < n; j++) {
+		int t = a[0];
+		for (int i = 0; i < 128 - 1; i++)
+		{
+			a[i] = a[i + 1];
+		}
+		a[127] = t;
+	}
+	return BinToDec(a);
+}
+
+
+//Xoay phải
+QInt operatorror(QInt x, int n)
+{
+	bool* a = new bool[128];
+
+	a = DecToBin(x);
+	for (int j = 0; j < n; j++) {
+		int t = a[127];
+		for (int i = 127; i > 0; i--)
+		{
+			a[i] = a[i - 1];
+		}
+		a[0] = t;
+	}
+	return BinToDec(a);
+}
